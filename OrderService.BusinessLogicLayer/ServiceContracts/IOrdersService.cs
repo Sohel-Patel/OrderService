@@ -4,7 +4,7 @@ using OrderService.DataAccessLayer.Entities;
 
 namespace OrderService.BusinessLogicLayer.ServiceContracts
 {
-    public interface IOrderService
+    public interface IOrdersService
     {
         Task<List<OrderResponse?>> GetOrders();
         Task<List<OrderResponse?>> GetOrdersByCondition(FilterDefinition<Order> filter);

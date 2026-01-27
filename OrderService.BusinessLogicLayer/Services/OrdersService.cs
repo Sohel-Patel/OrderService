@@ -9,7 +9,7 @@ using OrderService.DataAccessLayer.RepositoryContracts;
 
 namespace OrderService.BusinessLogicLayer.Services
 {
-    public class OrderService : IOrderService
+    public class OrdersService : IOrdersService
     {
         private readonly IOrdersRepository _ordersRepo;
         private readonly IMapper _mapper; 
