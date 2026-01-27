@@ -1,0 +1,19 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+# Ignore build output
+bin/
+obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.log
+
+# Ignore VS Code/Visual Studio settings
+.vscode/
+.vs/
+
+# Ignore temporary files
+*.tmp
+*.cache
