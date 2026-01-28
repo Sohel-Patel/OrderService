@@ -18,7 +18,10 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "MONGO_HOST": "localhost",
-        "MONGO_PORT": "27017"
+        "MONGO_PORT": "27017",
+        "MONGO_DATABASE":"OrdersDatabase",
+        "UsersMicroserviceName":"localhost",
+        "UsersMicroservicePort":"9090"
       }
     },
     "https": {
@@ -30,14 +33,22 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "MONGO_HOST": "localhost",
-        "MONGO_PORT": "27017"
+        "MONGO_PORT": "27017",
+        "MONGO_DATABASE":"OrdersDatabase",
+        "UsersMicroserviceName":"localhost",
+        "UsersMicroservicePort":"9090"
       }
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "MONGO_HOST": "localhost",
+        "MONGO_PORT": "27017",
+        "MONGO_DATABASE":"OrdersDatabase",
+        "UsersMicroserviceName":"localhost",
+        "UsersMicroservicePort":"9090"
       }
     }
   }

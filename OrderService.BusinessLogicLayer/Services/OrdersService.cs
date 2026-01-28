@@ -3,6 +3,7 @@ using FluentValidation;
 using FluentValidation.Results;
 using MongoDB.Driver;
 using OrderService.BusinessLogicLayer.DTO;
+using OrderService.BusinessLogicLayer.HttpClients;
 using OrderService.BusinessLogicLayer.ServiceContracts;
 using OrderService.DataAccessLayer.Entities;
 using OrderService.DataAccessLayer.RepositoryContracts;
@@ -17,12 +18,14 @@ namespace OrderService.BusinessLogicLayer.Services
         private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator;
         private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator;
         private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
+        private readonly UsersMicroserviceClient _usersMicroserviceClient;
         public OrdersService(IOrdersRepository ordersRepo,
             IMapper mapper, 
             IValidator<OrderAddRequest> orderAddRequestValidator,
             IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
             IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
-            IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator)
+            IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
+            UsersMicroserviceClient usersMicroserviceClient)
         {
             _ordersRepo = ordersRepo;
             _mapper = mapper;
@@ -30,6 +33,7 @@ namespace OrderService.BusinessLogicLayer.Services
             _orderItemAddRequestValidator = orderItemAddRequestValidator;
             _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
             _orderUpdateRequestValidator = orderUpdateRequestValidator;
+            _usersMicroserviceClient = usersMicroserviceClient;
         }
         public async Task<OrderResponse?> AddOrder(OrderAddRequest addRequest)
         {
@@ -37,7 +41,8 @@ namespace OrderService.BusinessLogicLayer.Services
             {
                 throw new ArgumentNullException(nameof(addRequest));
             }
-
+            
+            //validation using fluent validation
             ValidationResult orderAddRequestResult = await _orderAddRequestValidator.ValidateAsync(addRequest);
             if (!orderAddRequestResult.IsValid)
             {
@@ -57,7 +62,10 @@ namespace OrderService.BusinessLogicLayer.Services
             }
 
             //checking weather userid exist or not..
-
+            UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(addRequest.UserID);
+            if (user == null)
+                throw new ArgumentException("Invalid UserID");
+            
             //convert OrderAddRequest To Order..
             Order orderInput = _mapper.Map<Order>(addRequest);
 
@@ -138,7 +146,10 @@ namespace OrderService.BusinessLogicLayer.Services
             }
 
             //checking weather userid exist or not..
-
+            UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(updateRequest.UserID);
+            if (user == null)
+                throw new ArgumentException("Invalid UserID");
+            
             //convert OrderAddRequest To Order..
             Order orderInput = _mapper.Map<Order>(updateRequest);
 

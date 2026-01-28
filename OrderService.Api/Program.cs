@@ -1,5 +1,6 @@
 using FluentValidation.AspNetCore;
 using OrderService.BusinessLogicLayer;
+using OrderService.BusinessLogicLayer.HttpClients;
 using OrderService.DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,7 +21,10 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options => options.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader()));
-
+builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
+{
+    client.BaseAddress = new Uri($"http://{Environment.GetEnvironmentVariable("UsersMicroserviceName")}:{Environment.GetEnvironmentVariable("UsersMicroservicePort")}");
+});
 var app = builder.Build();
 
 app.UseExceptionHandlingMiddleware();
