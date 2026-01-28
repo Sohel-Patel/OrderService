@@ -16,7 +16,7 @@ namespace OrderService.DataAccessLayer
             services.AddScoped<IMongoDatabase>(provider => 
             {
                 IMongoClient client = provider.GetRequiredService<IMongoClient>();
-                return client.GetDatabase("OrdersDatabse");
+                return client.GetDatabase("OrdersDatabase");
             });
             services.AddScoped<IOrdersRepository,OrdersRepository>();
             return services;

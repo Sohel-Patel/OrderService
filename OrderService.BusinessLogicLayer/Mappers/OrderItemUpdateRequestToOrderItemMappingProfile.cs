@@ -8,7 +8,7 @@ namespace OrderService.BusinessLogicLayer.Mappers
     {
         public OrderItemUpdateRequestToOrderItemMappingProfile()
         {
-            CreateMap<OrderItemAddRequest,OrderItem>()
+            CreateMap<OrderItemUpdateRequest,OrderItem>()
             .ForMember(x => x.ProductID,options => options.MapFrom(x => x.ProductID))
             .ForMember(x => x.UnitPrice,options => options.MapFrom(x => x.UnitPrice))
             .ForMember(x => x.Quantity,options => options.MapFrom(x => x.Quantity))

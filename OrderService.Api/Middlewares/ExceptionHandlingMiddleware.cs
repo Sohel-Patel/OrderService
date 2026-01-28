@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
+using OrderService.Api.Middlewares;
 
 namespace OrderService.Api.Middlewares
 {
@@ -27,6 +28,9 @@ namespace OrderService.Api.Middlewares
                 {
                      _logger.LogError("{ExceptionType}:{ExceptionMessage}",ex.GetType().ToString(),ex.Message);
                 }
+
+                httpContext.Response.StatusCode = 500;
+                await httpContext.Response.WriteAsJsonAsync(new { Type = ex.GetType().ToString(), Message = ex.Message });
             }
             
         }
@@ -34,11 +38,11 @@ namespace OrderService.Api.Middlewares
     }
 }
 
-public static class ExceptionHandlingMiddlewareExtensions
+public static class ExceptionHandlingMiddlewareExtension
 {
     public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder builder)
     {
-        builder.UseMiddleware<ExceptionHandlerMiddleware>();
+        builder.UseMiddleware<ExceptionHandlingMiddleware>();
         return builder;
     }
 }

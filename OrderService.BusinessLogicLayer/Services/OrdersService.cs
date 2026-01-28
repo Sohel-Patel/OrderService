@@ -17,7 +17,7 @@ namespace OrderService.BusinessLogicLayer.Services
         private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator;
         private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator;
         private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
-        public OrderService(IOrdersRepository ordersRepo,
+        public OrdersService(IOrdersRepository ordersRepo,
             IMapper mapper, 
             IValidator<OrderAddRequest> orderAddRequestValidator,
             IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
