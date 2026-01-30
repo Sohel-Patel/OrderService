@@ -13,8 +13,7 @@ namespace OrderService.Api.Controllers
     public class OrdersController: ControllerBase
     {
         private readonly IOrdersService _ordersService;
-        private readonly OrderUpdateRequestValidator _updateOrderValidator;
-        public OrdersController(IOrdersService ordersService,OrderAddRequestValidator addOrderValidator)
+        public OrdersController(IOrdersService ordersService)
         {
             _ordersService = ordersService;
         }

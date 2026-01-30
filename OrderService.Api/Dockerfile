@@ -1,25 +1,29 @@
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 as base
-USER app
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 5264
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 as build
-WORKDIR /src
-COPY ["./OrderService.Api.OrderService.csproj","OrderService.Api/"]
-RUN dotnet restore "./OrderService.Api/OrderService.Api.csproj"
-COPY . .
-RUN dotnet build "./OrderService.Api/OrderService.Api.csproj" -c Release -o app/build
-
-FROM build as publish
-RUN dotnet publish "./OrderService.Api/OrderService.Api.csproj" -c Release -o app/publish /p:UseAppHost=false
-
-FROM base as final
-WORKDIR /app
-COPY --from=publish app/publish .
+ENV ASPNETCORE_URLS=http://+:5264
 ENV MONGO_HOST=localhost
 ENV MONGO_PORT=27017
 ENV MONGO_DATABASE=OrdersDatabase
 ENV UsersMicroserviceName=localhost
 ENV UsersMicroservicePort=9090
-ENTRYPOINT ["dotnet","OrderService.Api.dll"]
+
+USER app
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+ARG configuration=Release
+WORKDIR /src
+COPY ["OrderService.Api/OrderService.Api.csproj", "OrderService.Api/"]
+RUN dotnet restore "OrderService.Api/OrderService.Api.csproj"
+COPY . .
+WORKDIR "/src/OrderService.Api"
+RUN dotnet build "OrderService.Api.csproj" -c $configuration -o /app/build
+
+FROM build AS publish
+ARG configuration=Release
+RUN dotnet publish "OrderService.Api.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "OrderService.Api.dll"]

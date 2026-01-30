@@ -1,0 +1,31 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+
+services:
+  orderserviceapi:
+    image: orderserviceapi
+    build:
+      context: .
+      dockerfile: OrderService.Api/Dockerfile
+    ports:
+      - 5264:5264
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MONGO_HOST=mongodb-container
+      - MONGO_PORT=27017
+      - MONGO_DATABASE=OrdersDatabase
+      - UsersMicroserviceName=localhost
+      - UsersMicroservicePort=9090
+    networks:
+      - orders-mongodb-network
+  mongodb-container:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - orders-mongodb-network
+
+networks:
+  orders-mongodb-network:
+    driver: bridge
