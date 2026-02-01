@@ -2,12 +2,12 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 5264
 
-ENV ASPNETCORE_URLS=http://+:5264
-ENV MONGO_HOST=localhost
-ENV MONGO_PORT=27017
-ENV MONGO_DATABASE=OrdersDatabase
-ENV UsersMicroserviceName=localhost
-ENV UsersMicroservicePort=9090
+ENV ASPNETCORE_URLS=http://+:5264 \
+    MONGO_HOST=localhost \
+    MONGO_PORT=27017 \
+    MONGO_DATABASE=OrdersDatabase \
+    UsersMicroserviceName=localhost \
+    UsersMicroservicePort=8080
 
 USER app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
