@@ -1,8 +1,8 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 5264
+EXPOSE 8080
 
-ENV ASPNETCORE_URLS=http://+:5264 \
+ENV ASPNETCORE_URLS=http://+:8080 \
     MONGO_HOST=localhost \
     MONGO_PORT=27017 \
     MONGO_DATABASE=OrdersDatabase \
