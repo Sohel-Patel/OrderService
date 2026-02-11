@@ -18,6 +18,8 @@ services:
       - MONGO_DATABASE=OrdersDatabase
       - UsersMicroserviceName=usersserviceapi
       - UsersMicroservicePort=8080
+      - ProductsMicroserviceName=productsserviceapi,
+      - ProductsMicroservicePort=8080
     networks:
       - orders-mongo-network
       - ecommerce-network

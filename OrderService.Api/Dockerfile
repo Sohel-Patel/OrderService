@@ -7,7 +7,9 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     MONGO_PORT=27017 \
     MONGO_DATABASE=OrdersDatabase \
     UsersMicroserviceName=localhost \
-    UsersMicroservicePort=8080
+    UsersMicroservicePort=8080 \
+    ProductsMicroserviceName=localhost \
+    ProductsMicroservicePort=8080
 
 USER app
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build

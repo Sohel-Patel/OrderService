@@ -25,6 +25,10 @@ builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{Environment.GetEnvironmentVariable("UsersMicroserviceName")}:{Environment.GetEnvironmentVariable("UsersMicroservicePort")}");
 });
+builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
+{
+    client.BaseAddress = new Uri($"http://{Environment.GetEnvironmentVariable("ProductsMicroserviceName")}:{Environment.GetEnvironmentVariable("ProductsMicroservicePort")}");
+});
 var app = builder.Build();
 
 app.UseExceptionHandlingMiddleware();

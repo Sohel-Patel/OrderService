@@ -19,13 +19,15 @@ namespace OrderService.BusinessLogicLayer.Services
         private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator;
         private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
         private readonly UsersMicroserviceClient _usersMicroserviceClient;
+        private readonly ProductsMicroserviceClient _productsMicroserviceClient;
         public OrdersService(IOrdersRepository ordersRepo,
             IMapper mapper, 
             IValidator<OrderAddRequest> orderAddRequestValidator,
             IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
             IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
             IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
-            UsersMicroserviceClient usersMicroserviceClient)
+            UsersMicroserviceClient usersMicroserviceClient,
+            ProductsMicroserviceClient productsMicroserviceClient)
         {
             _ordersRepo = ordersRepo;
             _mapper = mapper;
@@ -34,6 +36,7 @@ namespace OrderService.BusinessLogicLayer.Services
             _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
             _orderUpdateRequestValidator = orderUpdateRequestValidator;
             _usersMicroserviceClient = usersMicroserviceClient;
+            _productsMicroserviceClient = productsMicroserviceClient;
         }
         public async Task<OrderResponse?> AddOrder(OrderAddRequest addRequest)
         {
@@ -58,6 +61,12 @@ namespace OrderService.BusinessLogicLayer.Services
                 {
                     string errors = string.Join(", ",orderItemAddRequestResult.Errors.Select(x => x.ErrorMessage));
                     throw new ArgumentException(errors);
+                }
+                //checking product id exist in database
+                ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(item.ProductID);
+                if (product == null)
+                {
+                    throw new ArgumentException("Invalid product in order");
                 }
             }
 
