@@ -59,7 +59,7 @@ services:
     ports:
       - 3307:3306
     volumes:
-      - ../eCommers.ProductsService/mysql-init:/docker-entrypoint-initdb.d:ro
+      - ../ProductService/mysql-init:/docker-entrypoint-initdb.d:ro
     networks:
       - products-mysql-network
 
@@ -91,7 +91,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ../eCommers/postgres-init:/docker-entrypoint-initdb.d:ro
+      - ../UsersMicroservice/postgres-init:/docker-entrypoint-initdb.d:ro
     networks:
       - users-postgres-network
 
