@@ -17,7 +17,7 @@ services:
       - MONGO_PORT=27017
       - MONGO_DATABASE=OrdersDatabase
       - UsersMicroserviceName=usersserviceapi
-      - UsersMicroservicePort=4000
+      - UsersMicroservicePort=8080
     networks:
       - orders-mongo-network
       - ecommerce-network
