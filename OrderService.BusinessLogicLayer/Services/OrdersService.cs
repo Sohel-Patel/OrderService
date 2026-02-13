@@ -53,6 +53,7 @@ namespace OrderService.BusinessLogicLayer.Services
                 throw new ArgumentException(errors);
             }
 
+            List<ProductDTO?> products = new List<ProductDTO?>();
             //validate each order item.
             foreach (OrderItemAddRequest item in addRequest.OrderItems)
             {
@@ -68,6 +69,7 @@ namespace OrderService.BusinessLogicLayer.Services
                 {
                     throw new ArgumentException("Invalid product in order");
                 }
+                products.Add(product);
             }
 
             //checking weather userid exist or not..
@@ -89,7 +91,18 @@ namespace OrderService.BusinessLogicLayer.Services
             {
                 return null;
             }
-            return _mapper.Map<OrderResponse>(addedOrder);
+            
+            OrderResponse orderResponse = _mapper.Map<OrderResponse>(addedOrder);
+            foreach (var orderItem in orderResponse.OrderItems)
+            {
+                ProductDTO? product = products.FirstOrDefault(x => x != null && x.ProductId == orderItem.ProductID);
+                if (product == null)
+                    continue;
+                
+                _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
+            }
+            
+            return orderResponse;
         }
 
         public async Task<bool> DeleteOrder(Guid orderID)
@@ -112,13 +125,37 @@ namespace OrderService.BusinessLogicLayer.Services
             {
                 return null;
             }
-            return _mapper.Map<OrderResponse>(existingOrder);
+            
+            OrderResponse orderResponse = _mapper.Map<OrderResponse>(existingOrder);
+            foreach (var orderItem in orderResponse.OrderItems)
+            {
+                ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(orderItem.ProductID);
+                if (product == null)
+                    continue;
+                
+                _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
+            }
+            return orderResponse;
         }
 
         public async Task<List<OrderResponse?>> GetOrders()
         {
             IEnumerable<Order?> orders = await _ordersRepo.GetOrders();
             IEnumerable<OrderResponse?> orderResponses = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+            foreach (var item in orderResponses)
+            {
+                if (item == null)
+                    continue;
+                
+                foreach (var orderItem in item.OrderItems)
+                {
+                    ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(orderItem.ProductID);
+                    if (product == null)
+                        continue;
+                    
+                    _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
+                }
+            }
             return orderResponses.ToList();
         }
 
@@ -126,6 +163,20 @@ namespace OrderService.BusinessLogicLayer.Services
         {
             IEnumerable<Order> orders = await _ordersRepo.GetOrdersByCondition(filter);
             IEnumerable<OrderResponse?> orderResponses = _mapper.Map<IEnumerable<OrderResponse>>(orders);
+            foreach (var item in orderResponses)
+            {
+                if (item == null)
+                    continue;
+                
+                foreach (var orderItem in item.OrderItems)
+                {
+                    ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(orderItem.ProductID);
+                    if (product == null)
+                        continue;
+                    
+                    _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
+                }
+            }
             return orderResponses.ToList();
         }
 
@@ -143,6 +194,7 @@ namespace OrderService.BusinessLogicLayer.Services
                 throw new ArgumentException(errors);
             }
 
+            List<ProductDTO?> products = new List<ProductDTO?>();
             //validate each order item.
             foreach (OrderItemUpdateRequest item in updateRequest.OrderItems)
             {
@@ -152,6 +204,13 @@ namespace OrderService.BusinessLogicLayer.Services
                     string errors = string.Join(", ",orderItemUpdateRequestResult.Errors.Select(x => x.ErrorMessage));
                     throw new ArgumentException(errors);
                 }
+                //checking product id exist in database
+                ProductDTO? product = await _productsMicroserviceClient.GetProductByProductID(item.ProductID);
+                if (product == null)
+                {
+                    throw new ArgumentException("Invalid product in order");
+                }
+                products.Add(product);
             }
 
             //checking weather userid exist or not..
@@ -174,7 +233,16 @@ namespace OrderService.BusinessLogicLayer.Services
             {
                 return null;
             }
-            return _mapper.Map<OrderResponse>(updatedOrder);
+            OrderResponse orderResponse = _mapper.Map<OrderResponse>(updatedOrder);
+            foreach (var orderItem in orderResponse.OrderItems)
+            {
+                ProductDTO? product = products.FirstOrDefault(x => x != null && x.ProductId == orderItem.ProductID);
+                if (product == null)
+                    continue;
+                
+                _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
+            }
+            return orderResponse;
         }
     }
 }
