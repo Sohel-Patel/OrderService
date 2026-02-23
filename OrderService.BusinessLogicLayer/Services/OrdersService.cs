@@ -70,6 +70,7 @@ namespace OrderService.BusinessLogicLayer.Services
                     throw new ArgumentException("Invalid product in order");
                 }
                 products.Add(product);
+                
             }
 
             //checking weather userid exist or not..
@@ -101,7 +102,11 @@ namespace OrderService.BusinessLogicLayer.Services
                 
                 _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
             }
-            
+
+            //load person name and email address here...
+            if (user != null)
+                _mapper.Map<UserDTO,OrderResponse>(user,orderResponse);
+
             return orderResponse;
         }
 
@@ -135,6 +140,11 @@ namespace OrderService.BusinessLogicLayer.Services
                 
                 _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
             }
+            //load person name and email address here...
+            UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(orderResponse.UserID);
+            if (user != null)
+                _mapper.Map<UserDTO,OrderResponse>(user,orderResponse);
+            
             return orderResponse;
         }
 
@@ -155,7 +165,17 @@ namespace OrderService.BusinessLogicLayer.Services
                     
                     _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
                 }
+
+                //load person name and email address here...
+                UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(item.UserID);
+                if (user == null)
+                    continue;
+                _mapper.Map<UserDTO,OrderResponse>(user,item);
+            
             }
+            
+
+            
             return orderResponses.ToList();
         }
 
@@ -176,6 +196,12 @@ namespace OrderService.BusinessLogicLayer.Services
                     
                     _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
                 }
+
+                //load person name and email address here...
+                UserDTO? user = await _usersMicroserviceClient.GetUserByUserID(item.UserID);
+                if (user == null)
+                    continue;
+                _mapper.Map<UserDTO,OrderResponse>(user,item);
             }
             return orderResponses.ToList();
         }
@@ -242,6 +268,9 @@ namespace OrderService.BusinessLogicLayer.Services
                 
                 _mapper.Map<ProductDTO,OrderItemResponse>(product,orderItem);
             }
+             //load person name and email address here...
+            _mapper.Map<UserDTO,OrderResponse>(user,orderResponse);
+
             return orderResponse;
         }
     }
