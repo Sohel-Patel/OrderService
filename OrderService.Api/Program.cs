@@ -1,7 +1,9 @@
 using FluentValidation.AspNetCore;
 using OrderService.BusinessLogicLayer;
 using OrderService.BusinessLogicLayer.HttpClients;
+using OrderService.BusinessLogicLayer.Policies;
 using OrderService.DataAccessLayer;
+using Polly;
 
 var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddDataAccessLayer();
@@ -21,10 +23,14 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options => options.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader()));
+
+builder.Services.AddTransient<IUsersMicroservicePolicies,UsersMicrroservicePolicies>();
 builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{Environment.GetEnvironmentVariable("UsersMicroserviceName")}:{Environment.GetEnvironmentVariable("UsersMicroservicePort")}");
-});
+}).AddPolicyHandler(
+    builder.Services.BuildServiceProvider().GetRequiredService<IUsersMicroservicePolicies>().GetRetryPolicy()
+);
 builder.Services.AddHttpClient<ProductsMicroserviceClient>(client =>
 {
     client.BaseAddress = new Uri($"http://{Environment.GetEnvironmentVariable("ProductsMicroserviceName")}:{Environment.GetEnvironmentVariable("ProductsMicroservicePort")}");
