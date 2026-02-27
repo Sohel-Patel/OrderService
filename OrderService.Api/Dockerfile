@@ -21,7 +21,7 @@ COPY . .
 WORKDIR "/src/OrderService.Api"
 RUN dotnet build "OrderService.Api.csproj" -c $configuration -o /app/build
 
-FROM build AS publish
+FROM build AS publish 
 ARG configuration=Release
 RUN dotnet publish "OrderService.Api.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
 
